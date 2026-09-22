@@ -1,4 +1,4 @@
-package com.ronyarg.webmacros.user.Role;
+package com.ronyarg.webmacros.user;
 
 import java.util.Optional;
 
