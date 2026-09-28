@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ronyarg.webmacros.auth.dto.RegisterRequest;
+import com.ronyarg.webmacros.auth.exception.EmailAlreadyExistsException;
 import com.ronyarg.webmacros.user.Role;
 import com.ronyarg.webmacros.user.User;
 import com.ronyarg.webmacros.user.UserRepository;
@@ -23,7 +24,7 @@ public class AuthService {
 
     public void register(RegisterRequest request){
         if(userRepository.existsByEmail(request.email())){
-            throw new IllegalArgumentException("El correo electrónico ya está registrado");
+            throw new EmailAlreadyExistsException(request.email());
         }  
         
         User user = new User();
