@@ -2,8 +2,10 @@ package com.ronyarg.webmacros.auth;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ronyarg.webmacros.auth.dto.RegisterRequest;
+import com.ronyarg.webmacros.auth.dto.RegisterResponse;
 import com.ronyarg.webmacros.auth.exception.EmailAlreadyExistsException;
 import com.ronyarg.webmacros.user.Role;
 import com.ronyarg.webmacros.user.User;
@@ -22,7 +24,8 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public void register(RegisterRequest request){
+    @Transactional 
+    public RegisterResponse register(RegisterRequest request){
         if(userRepository.existsByEmail(request.email())){
             throw new EmailAlreadyExistsException(request.email());
         }  
@@ -34,6 +37,15 @@ public class AuthService {
         // all users will have the role of USER by default
         user.setRole(Role.USER);
         userRepository.save(user);
+
+        User savedUser = userRepository.save(user);
+
+        return new RegisterResponse(
+            savedUser.getId(),
+            savedUser.getName(),
+            savedUser.getEmail(),
+            savedUser.getRole()
+        );
     }
 
 }

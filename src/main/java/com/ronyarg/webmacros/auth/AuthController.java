@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ronyarg.webmacros.auth.dto.RegisterRequest;
+import com.ronyarg.webmacros.auth.dto.RegisterResponse;
 
 import jakarta.validation.Valid;
 
@@ -22,11 +23,11 @@ public class AuthController {
         this.authService = authService;
     }
     @PostMapping("/register")
-    public ResponseEntity<Void> register(
+    public ResponseEntity<RegisterResponse> register(
         @Valid @RequestBody RegisterRequest request
     ) {
-        authService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        RegisterResponse response = authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
 
