@@ -1,5 +1,6 @@
 package com.ronyarg.webmacros.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -48,6 +49,18 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(errorResponse);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.CONFLICT.value(),
+            "Conflict",
+            "No se pudo completar la operación porque los datos entraron en conflicto con información existente."
+        );
+        return ResponseEntity
+        .status(HttpStatus.CONFLICT)
         .body(errorResponse);
     }
 }
