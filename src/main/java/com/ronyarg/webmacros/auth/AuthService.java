@@ -26,17 +26,19 @@ public class AuthService {
 
     @Transactional 
     public RegisterResponse register(RegisterRequest request){
-        if(userRepository.existsByEmail(request.email())){
-            throw new EmailAlreadyExistsException(request.email());
+        String email = request.email().trim().toLowerCase();
+        String name = request.name().trim();
+
+        if(userRepository.existsByEmail(email)) {
+            throw new EmailAlreadyExistsException(email);
         }  
         
         User user = new User();
-        user.setName(request.name());
-        user.setEmail(request.email());
+        user.setName(name);
+        user.setEmail(email);
         user.setPassword(passwordEncoder.encode(request.password()));
         // all users will have the role of USER by default
         user.setRole(Role.USER);
-        userRepository.save(user);
 
         User savedUser = userRepository.save(user);
 
