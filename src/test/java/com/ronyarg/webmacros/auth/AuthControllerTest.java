@@ -136,8 +136,7 @@ class AuthControllerTest {
                 String json = """
                                 {
                                     "name": "Juan",
-                                    "email": "juan123@test.com",
-                                    "password": ""
+                                    "email": "juan123@test.com"
                                 }
                                 """;
 
