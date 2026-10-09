@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ronyarg.webmacros.auth.dto.LoginRequest;
+import com.ronyarg.webmacros.auth.dto.LoginResponse;
 import com.ronyarg.webmacros.auth.dto.RegisterRequest;
 import com.ronyarg.webmacros.auth.dto.RegisterResponse;
 
@@ -22,6 +24,7 @@ public class AuthController {
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
+    
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(
         @Valid @RequestBody RegisterRequest request
@@ -29,6 +32,12 @@ public class AuthController {
         RegisterResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    
 
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+        @Valid @RequestBody LoginRequest request
+    ) {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
+    } 
 }
