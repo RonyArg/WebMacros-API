@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ronyarg.webmacros.auth.exception.EmailAlreadyExistsException;
+import com.ronyarg.webmacros.auth.exception.InvalidCredentialsException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -61,6 +62,18 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity
         .status(HttpStatus.CONFLICT)
+        .body(errorResponse);
+    }
+
+    @ExceptionHandler (InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.UNAUTHORIZED.value(),
+            "Unauthorized",
+            exception.getMessage()
+        );
+        return ResponseEntity
+        .status(HttpStatus.UNAUTHORIZED)
         .body(errorResponse);
     }
 }
