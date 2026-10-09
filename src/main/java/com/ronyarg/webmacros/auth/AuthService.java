@@ -4,9 +4,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ronyarg.webmacros.auth.dto.LoginRequest;
+import com.ronyarg.webmacros.auth.dto.LoginResponse;
 import com.ronyarg.webmacros.auth.dto.RegisterRequest;
 import com.ronyarg.webmacros.auth.dto.RegisterResponse;
 import com.ronyarg.webmacros.auth.exception.EmailAlreadyExistsException;
+import com.ronyarg.webmacros.auth.exception.InvalidCredentialsException;
+import com.ronyarg.webmacros.auth.security.JwtService;
 import com.ronyarg.webmacros.user.Role;
 import com.ronyarg.webmacros.user.User;
 import com.ronyarg.webmacros.user.UserRepository;
@@ -15,13 +19,16 @@ import com.ronyarg.webmacros.user.UserRepository;
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
     
 
     public AuthService(
         PasswordEncoder passwordEncoder,
-        UserRepository userRepository) {
+        UserRepository userRepository, 
+        JwtService jwtService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     @Transactional 
@@ -47,6 +54,24 @@ public class AuthService {
             savedUser.getName(),
             savedUser.getEmail(),
             savedUser.getRole()
+        );
+    }
+
+    @Transactional (readOnly = true)
+    public LoginResponse login(LoginRequest request){
+        String email = request.email().trim().toLowerCase();
+        User user = userRepository.findByEmail(email).orElseThrow(InvalidCredentialsException::new);
+        if(user == null) {
+            throw new InvalidCredentialsException();
+        }
+        if(!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new InvalidCredentialsException();
+        }
+        String token = jwtService.generateToken(user);
+        return new LoginResponse(
+            token,
+            user.getName(),
+            user.getEmail()
         );
     }
 
