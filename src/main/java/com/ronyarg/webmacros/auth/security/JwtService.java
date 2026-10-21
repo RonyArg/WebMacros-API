@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.ronyarg.webmacros.user.User;
@@ -37,9 +38,9 @@ public class JwtService {
                 .compact();
     }
 
-    public boolean isTokenValid(String token, User user){
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
-            return user.getEmail().equals(extractUsername(token)) && !isTokenExpired(token);
+            return userDetails.getUsername().equals(extractUsername(token)) && !isTokenExpired(token);
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
