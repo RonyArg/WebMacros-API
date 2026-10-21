@@ -57,6 +57,7 @@ public class AuthService {
         );
     }
 
+    // Authenticates manually for now, could use Spring Security's AuthenticationManager instead
     @Transactional (readOnly = true)
     public LoginResponse login(LoginRequest request){
         String email = request.email().trim().toLowerCase();
